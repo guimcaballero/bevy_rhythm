@@ -1,5 +1,8 @@
 use bevy::{input::system::exit_on_esc_system, prelude::*};
 
+mod arrows;
+use arrows::ArrowsPlugin;
+
 fn main() {
     App::build()
         // Set antialiasing to use 4 samples
@@ -14,6 +17,7 @@ fn main() {
         .add_startup_system(setup.system())
         .add_system(exit_on_esc_system.system())
         .add_plugins(DefaultPlugins)
+        .add_plugin(ArrowsPlugin)
         .run();
 }
 

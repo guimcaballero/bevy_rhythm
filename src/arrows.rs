@@ -24,3 +24,48 @@ impl FromResources for ArrowMaterialResource {
         }
     }
 }
+
+/// Actual component that goes on the sprites
+struct Arrow;
+
+/// Keeps track of when to Spawn a new arrow
+struct SpawnTimer(Timer);
+
+/// Spawns arrows
+fn spawn_arrows(
+    commands: &mut Commands,
+    materials: Res<ArrowMaterialResource>,
+    time: Res<Time>,
+    mut timer: ResMut<SpawnTimer>,
+) {
+    if !timer.0.tick(time.delta_seconds()).just_finished() {
+        return;
+    }
+
+    let transform = Transform::from_translation(Vec3::new(-400., 0., 1.));
+    commands
+        .spawn(SpriteBundle {
+            material: materials.red_texture.clone(),
+            sprite: Sprite::new(Vec2::new(140., 140.)),
+            transform,
+            ..Default::default()
+        })
+        .with(Arrow);
+}
+
+/// Moves the arrows forward
+fn move_arrows(time: Res<Time>, mut query: Query<(&mut Transform, &Arrow)>) {
+    for (mut transform, _arrow) in query.iter_mut() {
+        transform.translation.x += time.delta_seconds() * 200.;
+    }
+}
+
+pub struct ArrowsPlugin;
+impl Plugin for ArrowsPlugin {
+    fn build(&self, app: &mut AppBuilder) {
+        app.init_resource::<ArrowMaterialResource>()
+            .add_resource(SpawnTimer(Timer::from_seconds(1.0, true)))
+            .add_system(spawn_arrows.system())
+            .add_system(move_arrows.system());
+    }
+}
