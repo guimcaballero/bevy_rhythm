@@ -11,7 +11,12 @@ fn main() {
             height: 600.,
             ..Default::default()
         })
-        .add_plugins(DefaultPlugins)
+        .add_startup_system(setup.system())
         .add_system(exit_on_esc_system.system())
+        .add_plugins(DefaultPlugins)
         .run();
+}
+
+fn setup(commands: &mut Commands) {
+    commands.spawn(Camera2dBundle::default());
 }
