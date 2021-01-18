@@ -2,6 +2,8 @@ use bevy::{input::system::exit_on_esc_system, prelude::*};
 
 mod arrows;
 use arrows::ArrowsPlugin;
+mod consts;
+mod types;
 
 fn main() {
     App::build()
@@ -22,5 +24,9 @@ fn main() {
 }
 
 fn setup(commands: &mut Commands) {
-    commands.spawn(Camera2dBundle::default());
+    let config = types::load_config();
+
+    commands
+        .spawn(Camera2dBundle::default())
+        .insert_resource(config);
 }

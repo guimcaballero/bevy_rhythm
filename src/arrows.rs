@@ -1,3 +1,4 @@
+use crate::consts::*;
 use bevy::prelude::*;
 
 /// Keeps the textures and materials for Arrows
@@ -42,7 +43,7 @@ fn spawn_arrows(
         return;
     }
 
-    let transform = Transform::from_translation(Vec3::new(-400., 0., 1.));
+    let transform = Transform::from_translation(Vec3::new(SPAWN_POSITION, 0., 1.));
     commands
         .spawn(SpriteBundle {
             material: materials.red_texture.clone(),
@@ -56,7 +57,7 @@ fn spawn_arrows(
 /// Moves the arrows forward
 fn move_arrows(time: Res<Time>, mut query: Query<(&mut Transform, &Arrow)>) {
     for (mut transform, _arrow) in query.iter_mut() {
-        transform.translation.x += time.delta_seconds() * 200.;
+        transform.translation.x += time.delta_seconds() * BASE_SPEED;
     }
 }
 
