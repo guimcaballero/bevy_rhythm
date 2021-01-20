@@ -76,8 +76,8 @@ impl ArrowTime {
         let speed_value = speed.value();
         Self {
             spawn_time: click_time - (DISTANCE / speed_value) as f64,
-            speed: speed,
-            direction: direction,
+            speed,
+            direction,
         }
     }
 }
