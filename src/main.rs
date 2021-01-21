@@ -4,6 +4,8 @@ mod arrows;
 use arrows::ArrowsPlugin;
 mod consts;
 mod types;
+mod ui;
+use ui::UIPlugin;
 
 fn main() {
     App::build()
@@ -20,6 +22,7 @@ fn main() {
         .add_system(exit_on_esc_system.system())
         .add_plugins(DefaultPlugins)
         .add_plugin(ArrowsPlugin)
+        .add_plugin(UIPlugin)
         .run();
 }
 
@@ -28,5 +31,6 @@ fn setup(commands: &mut Commands) {
 
     commands
         .spawn(Camera2dBundle::default())
+        .spawn(CameraUiBundle::default())
         .insert_resource(config);
 }
