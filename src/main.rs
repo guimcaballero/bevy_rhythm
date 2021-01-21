@@ -6,6 +6,8 @@ mod consts;
 mod types;
 mod ui;
 use ui::UIPlugin;
+mod score;
+use score::ScoreResource;
 
 fn main() {
     App::build()
@@ -18,6 +20,7 @@ fn main() {
             height: 600.,
             ..Default::default()
         })
+        .init_resource::<ScoreResource>()
         .add_startup_system(setup.system())
         .add_system(exit_on_esc_system.system())
         .add_plugins(DefaultPlugins)
