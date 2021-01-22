@@ -29,8 +29,8 @@ fn main() {
         .run();
 }
 
-fn setup(commands: &mut Commands) {
-    let config = types::load_config();
+fn setup(commands: &mut Commands, asset_server: Res<AssetServer>) {
+    let config = types::load_config("test.toml", &asset_server);
 
     commands
         .spawn(Camera2dBundle::default())

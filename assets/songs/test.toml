@@ -1,0 +1,16 @@
+name = "Test song"
+filename = "audio.mp3"
+
+arrows = [
+    { click_time = 1.00, speed = "Slow", direction = "Up" },
+    { click_time = 3.00, speed = "Slow", direction = "Down" },
+    { click_time = 5.00, speed = "Fast", direction = "Left" },
+    { click_time = 5.00, speed = "Slow", direction = "Right" },
+    { click_time = 7.00, speed = "Slow", direction = "Up" },
+    { click_time = 8.00, speed = "Medium", direction = "Up" },
+    { click_time = 9.00, speed = "Slow", direction = "Left" },
+    { click_time = 10.00, speed = "Slow", direction = "Right" },
+    { click_time = 10.50, speed = "Medium", direction = "Right" },
+    { click_time = 11.00, speed = "Slow", direction = "Up" },
+    { click_time = 11.00, speed = "Slow", direction = "Down" },
+]
