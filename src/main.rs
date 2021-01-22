@@ -8,6 +8,8 @@ mod ui;
 use ui::UIPlugin;
 mod score;
 use score::ScoreResource;
+mod audio;
+use audio::AudioPlugin;
 
 fn main() {
     App::build()
@@ -26,6 +28,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(ArrowsPlugin)
         .add_plugin(UIPlugin)
+        .add_plugin(AudioPlugin)
         .run();
 }
 
