@@ -81,14 +81,14 @@ fn update_time_text(time: Res<Time>, mut query: Query<(&mut Text, &TimeText)>) {
         return;
     }
 
-    for (mut text, _tag) in query.iter_mut() {
+    for (mut text, _marker) in query.iter_mut() {
         text.value = format!("Time: {:.2}", secs);
     }
 }
 
 struct ScoreText;
 fn update_score_text(score: ChangedRes<ScoreResource>, mut query: Query<(&mut Text, &ScoreText)>) {
-    for (mut text, _tag) in query.iter_mut() {
+    for (mut text, _marker) in query.iter_mut() {
         text.value = format!(
             "Score: {}. Corrects: {}. Fails: {}",
             score.score(),
