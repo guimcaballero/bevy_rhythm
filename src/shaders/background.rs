@@ -5,6 +5,7 @@ pub fn setup_background(
     commands: &mut Commands,
     mut pipelines: ResMut<Assets<PipelineDescriptor>>,
     mut shaders: ResMut<Assets<Shader>>,
+    window: Res<WindowDescriptor>,
 ) {
     // Create a new shader pipeline
     let pipeline_handle = pipelines.add(PipelineDescriptor::default_config(ShaderStages {
@@ -18,17 +19,23 @@ pub fn setup_background(
         ))),
     }));
 
-    let mut transform = Transform::from_scale(Vec3::new(810., 610., 1.));
-    transform.translation = Vec3::new(0., 0., 10.);
     commands
         .spawn(SpriteBundle {
             render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
                 pipeline_handle,
             )]),
-            transform: Transform::from_scale(Vec3::new(810., 610., 1.)),
+            transform: Transform::from_scale(Vec3::new(
+                window.width + 10.,
+                window.height + 10.,
+                1.,
+            )),
             ..Default::default()
         })
-        .with(Background);
+        .with(Background)
+        .with(ShaderInputs {
+            time: 0.,
+            resolution: Vec2::new(window.width / window.height, 1.),
+        });
 }
 
 pub fn update_background_size(
