@@ -10,6 +10,8 @@ mod score;
 use score::ScoreResource;
 mod audio;
 use audio::AudioPlugin;
+mod shaders;
+use shaders::ShadersPlugin;
 
 fn main() {
     App::build()
@@ -29,6 +31,7 @@ fn main() {
         .add_plugin(ArrowsPlugin)
         .add_plugin(UIPlugin)
         .add_plugin(AudioPlugin)
+        .add_plugin(ShadersPlugin)
         .run();
 }
 
