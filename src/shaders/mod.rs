@@ -13,6 +13,8 @@ use bevy::{
 
 mod background;
 use background::*;
+mod target_arrows;
+use target_arrows::*;
 
 #[derive(RenderResources, Default, TypeUuid)]
 #[uuid = "0320b9b8-b3a3-4baa-8bfa-c94008177b17"]
@@ -55,10 +57,13 @@ pub struct ShadersPlugin;
 impl Plugin for ShadersPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_asset::<ShaderInputs>()
+            .add_asset::<TimeSinceLastCorrect>()
             .add_startup_system(setup_render_graph.system())
             .add_system(update_time.system())
             .add_system(update_resolution.system())
             .add_startup_system(setup_background.system())
-            .add_system(update_background_size.system());
+            .add_system(update_background_size.system())
+            .add_startup_system(setup_target_arrows.system())
+            .add_system(correct_arrow_event_listener.system());
     }
 }
