@@ -3,6 +3,7 @@ use bevy::{input::system::exit_on_esc_system, prelude::*};
 mod arrows;
 use arrows::ArrowsPlugin;
 mod consts;
+use consts::*;
 mod types;
 mod ui;
 use ui::UIPlugin;
@@ -24,6 +25,12 @@ fn main() {
             height: 600.,
             ..Default::default()
         })
+        .add_resource(State::new(AppState::Menu))
+        .add_stage_after(
+            stage::UPDATE,
+            APP_STATE_STAGE,
+            StateStage::<AppState>::default(),
+        )
         .init_resource::<ScoreResource>()
         .add_startup_system(setup.system())
         .add_system(exit_on_esc_system.system())

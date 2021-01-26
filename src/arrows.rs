@@ -174,9 +174,13 @@ impl Plugin for ArrowsPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ArrowMaterialResource>()
             .init_resource::<Events<CorrectArrowEvent>>()
-            .add_startup_system(setup_target_arrows.system())
-            .add_system(spawn_arrows.system())
-            .add_system(move_arrows.system())
-            .add_system(despawn_arrows.system());
+            .on_state_enter(
+                APP_STATE_STAGE,
+                AppState::Game,
+                setup_target_arrows.system(),
+            )
+            .on_state_update(APP_STATE_STAGE, AppState::Game, spawn_arrows.system())
+            .on_state_update(APP_STATE_STAGE, AppState::Game, move_arrows.system())
+            .on_state_update(APP_STATE_STAGE, AppState::Game, despawn_arrows.system());
     }
 }

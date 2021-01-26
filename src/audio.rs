@@ -1,3 +1,4 @@
+use crate::consts::*;
 use crate::types::SongConfig;
 use bevy::prelude::*;
 
@@ -14,6 +15,6 @@ fn start_song(audio: Res<Audio>, time: Res<Time>, config: Res<SongConfig>) {
 pub struct AudioPlugin;
 impl Plugin for AudioPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_system(start_song.system());
+        app.on_state_update(APP_STATE_STAGE, AppState::Game, start_song.system());
     }
 }

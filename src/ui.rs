@@ -1,3 +1,4 @@
+use crate::consts::*;
 use crate::ScoreResource;
 use bevy::prelude::*;
 
@@ -101,8 +102,8 @@ fn update_score_text(score: ChangedRes<ScoreResource>, mut query: Query<(&mut Te
 pub struct UIPlugin;
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_startup_system(setup_ui.system())
-            .add_system(update_time_text.system())
-            .add_system(update_score_text.system());
+        app.on_state_enter(APP_STATE_STAGE, AppState::Game, setup_ui.system())
+            .on_state_update(APP_STATE_STAGE, AppState::Game, update_time_text.system())
+            .on_state_update(APP_STATE_STAGE, AppState::Game, update_score_text.system());
     }
 }
