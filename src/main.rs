@@ -13,6 +13,8 @@ mod audio;
 use audio::AudioPlugin;
 mod shaders;
 use shaders::ShadersPlugin;
+mod menu;
+use menu::MenuPlugin;
 
 fn main() {
     App::build()
@@ -39,6 +41,7 @@ fn main() {
         .add_plugin(UIPlugin)
         .add_plugin(AudioPlugin)
         .add_plugin(ShadersPlugin)
+        .add_plugin(MenuPlugin)
         .run();
 }
 
