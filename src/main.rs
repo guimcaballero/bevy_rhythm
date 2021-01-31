@@ -15,6 +15,9 @@ mod shaders;
 use shaders::ShadersPlugin;
 mod menu;
 use menu::MenuPlugin;
+mod time;
+use time::TimePlugin;
+mod map_maker;
 
 fn main() {
     App::build()
@@ -42,14 +45,12 @@ fn main() {
         .add_plugin(AudioPlugin)
         .add_plugin(ShadersPlugin)
         .add_plugin(MenuPlugin)
+        .add_plugin(TimePlugin)
         .run();
 }
 
-fn setup(commands: &mut Commands, asset_server: Res<AssetServer>) {
-    let config = types::load_config("test.toml", &asset_server);
-
+fn setup(commands: &mut Commands) {
     commands
         .spawn(Camera2dBundle::default())
-        .spawn(CameraUiBundle::default())
-        .insert_resource(config);
+        .spawn(CameraUiBundle::default());
 }
