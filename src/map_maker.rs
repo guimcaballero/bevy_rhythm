@@ -13,7 +13,6 @@ use bevy::{
 use serde_derive::Serialize;
 use std::fs::File;
 use std::io::prelude::*;
-use toml;
 
 #[derive(Serialize, Debug, Default)]
 struct Presses {
@@ -90,10 +89,24 @@ fn toggle_map_maker_arrows(
     }
 }
 
+struct MapMakerAudio(Handle<AudioSource>);
+impl FromResources for MapMakerAudio {
+    fn from_resources(resources: &Resources) -> Self {
+        let asset_server = resources.get_mut::<AssetServer>().unwrap();
+        let audio = asset_server.load("map_maker_song.mp3");
+        Self(audio)
+    }
+}
+fn start_song(audio: Res<Audio>, map_maker_audio: Res<MapMakerAudio>) {
+    audio.play(map_maker_audio.0.clone());
+}
+
 pub struct MapMakerPlugin;
 impl Plugin for MapMakerPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<Presses>()
+            .init_resource::<MapMakerAudio>()
+            .on_state_enter(APP_STATE_STAGE, AppState::MakeMap, start_song.system())
             .on_state_enter(
                 APP_STATE_STAGE,
                 AppState::MakeMap,
