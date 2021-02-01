@@ -80,6 +80,7 @@ impl Plugin for TimePlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ControlledTime>()
             .on_state_update(APP_STATE_STAGE, AppState::Game, update_time.system())
+            .on_state_update(APP_STATE_STAGE, AppState::MakeMap, update_time.system())
             .on_state_enter(
                 APP_STATE_STAGE,
                 AppState::Game,

@@ -27,6 +27,18 @@ impl Directions {
         keys.iter().any(|code| input.just_pressed(*code))
     }
 
+    /// Checks if a key that corresponds to this direction is being pressed
+    pub fn key_pressed(&self, input: &Input<KeyCode>) -> bool {
+        let keys = match self {
+            Directions::Up => [KeyCode::Up, KeyCode::D],
+            Directions::Down => [KeyCode::Down, KeyCode::F],
+            Directions::Left => [KeyCode::Left, KeyCode::J],
+            Directions::Right => [KeyCode::Right, KeyCode::K],
+        };
+
+        keys.iter().any(|code| input.pressed(*code))
+    }
+
     /// Returns the correct rotation for an arrow with this direction
     pub fn rotation(&self) -> f32 {
         match self {

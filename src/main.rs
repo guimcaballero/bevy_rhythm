@@ -18,6 +18,7 @@ use menu::MenuPlugin;
 mod time;
 use time::TimePlugin;
 mod map_maker;
+use map_maker::MapMakerPlugin;
 
 fn main() {
     App::build()
@@ -46,6 +47,7 @@ fn main() {
         .add_plugin(ShadersPlugin)
         .add_plugin(MenuPlugin)
         .add_plugin(TimePlugin)
+        .add_plugin(MapMakerPlugin)
         .run();
 }
 
