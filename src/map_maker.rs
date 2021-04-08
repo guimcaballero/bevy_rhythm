@@ -36,12 +36,8 @@ fn save_key_presses(
     }
 }
 
-fn save_to_file_on_exit(
-    mut event_reader: Local<EventReader<AppExit>>,
-    events: Res<Events<AppExit>>,
-    presses: Res<Presses>,
-) {
-    for _event in event_reader.iter(&events) {
+fn save_to_file_on_exit(mut event_reader: EventReader<AppExit>, presses: Res<Presses>) {
+    for _event in event_reader.iter() {
         let text = toml::to_string(&*presses).expect("Couldn't convert to toml text");
 
         let mut file = File::create("map.toml").expect("Couldn't open map.toml");
@@ -52,7 +48,7 @@ fn save_to_file_on_exit(
 
 struct MapMakerArrow(Directions);
 fn setup_map_maker_arrows(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
     asset_server: ResMut<AssetServer>,
 ) {
@@ -70,13 +66,13 @@ fn setup_map_maker_arrows(
         let mut transform = Transform::from_translation(Vec3::new(0., y, 1.));
         transform.rotate(Quat::from_rotation_z(direction.rotation()));
         commands
-            .spawn(SpriteBundle {
+            .spawn_bundle(SpriteBundle {
                 material: border_handle.clone(),
                 sprite: Sprite::new(Vec2::new(140., 140.)),
                 transform,
                 ..Default::default()
             })
-            .with(MapMakerArrow(*direction));
+            .insert(MapMakerArrow(*direction));
     }
 }
 
@@ -90,9 +86,11 @@ fn toggle_map_maker_arrows(
 }
 
 struct MapMakerAudio(Handle<AudioSource>);
-impl FromResources for MapMakerAudio {
-    fn from_resources(resources: &Resources) -> Self {
-        let asset_server = resources.get_mut::<AssetServer>().unwrap();
+impl FromWorld for MapMakerAudio {
+    fn from_world(world: &mut World) -> Self {
+        let world = world.cell();
+
+        let asset_server = world.get_resource_mut::<AssetServer>().unwrap();
         let audio = asset_server.load("map_maker_song.mp3");
         Self(audio)
     }
@@ -106,26 +104,16 @@ impl Plugin for MapMakerPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<Presses>()
             .init_resource::<MapMakerAudio>()
-            .on_state_enter(APP_STATE_STAGE, AppState::MakeMap, start_song.system())
-            .on_state_enter(
-                APP_STATE_STAGE,
-                AppState::MakeMap,
-                setup_map_maker_arrows.system(),
+            .add_system_set(
+                SystemSet::on_enter(AppState::MakeMap)
+                    .with_system(setup_map_maker_arrows.system())
+                    .with_system(start_song.system()),
             )
-            .on_state_update(
-                APP_STATE_STAGE,
-                AppState::MakeMap,
-                toggle_map_maker_arrows.system(),
-            )
-            .on_state_update(
-                APP_STATE_STAGE,
-                AppState::MakeMap,
-                save_key_presses.system(),
-            )
-            .on_state_update(
-                APP_STATE_STAGE,
-                AppState::MakeMap,
-                save_to_file_on_exit.system(),
+            .add_system_set(
+                SystemSet::on_update(AppState::Game)
+                    .with_system(toggle_map_maker_arrows.system())
+                    .with_system(save_to_file_on_exit.system())
+                    .with_system(save_key_presses.system()),
             );
     }
 }

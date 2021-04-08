@@ -4,7 +4,7 @@ use crate::consts::*;
 use crate::types::Directions::{self, *};
 
 pub fn setup_target_arrows(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut pipelines: ResMut<Assets<PipelineDescriptor>>,
     mut shaders: ResMut<Assets<Shader>>,
     mut render_graph: ResMut<RenderGraph>,
@@ -44,7 +44,7 @@ pub fn setup_target_arrows(
             Transform::from_translation(Vec3::new(TARGET_POSITION, direction.y(), z));
         transform.scale = Vec3::new(300., 300., 1.);
         commands
-            .spawn(SpriteBundle {
+            .spawn_bundle(SpriteBundle {
                 render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
                     pipeline_handle.clone(),
                 )]),
@@ -55,14 +55,14 @@ pub fn setup_target_arrows(
                 },
                 ..Default::default()
             })
-            .with(TargetArrowSparkle {
+            .insert(TargetArrowSparkle {
                 direction: *direction,
             })
-            .with(TimeSinceLastCorrect {
+            .insert(TimeSinceLastCorrect {
                 last_time: -10.,
                 points: 0.,
             })
-            .with(ShaderInputs {
+            .insert(ShaderInputs {
                 time: 0.,
                 resolution: Vec2::new(window.width / window.height, 1.),
             });
@@ -82,11 +82,10 @@ pub struct TargetArrowSparkle {
 
 pub fn correct_arrow_event_listener(
     time: Res<Time>,
-    mut correct_event_reader: Local<EventReader<CorrectArrowEvent>>,
-    correct_events: Res<Events<CorrectArrowEvent>>,
+    mut correct_event_reader: EventReader<CorrectArrowEvent>,
     mut query: Query<(&TargetArrowSparkle, &mut TimeSinceLastCorrect)>,
 ) {
-    for event in correct_event_reader.iter(&correct_events) {
+    for event in correct_event_reader.iter() {
         for (arrow, mut last_correct) in query.iter_mut() {
             if arrow.direction == event.direction {
                 last_correct.last_time = time.seconds_since_startup() as f32;

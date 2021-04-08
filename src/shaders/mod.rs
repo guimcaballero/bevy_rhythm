@@ -34,11 +34,10 @@ fn update_time(time: Res<Time>, mut nodes: Query<&mut ShaderInputs>) {
 
 /// Updates resolution in ShaderInputs if window size changes
 fn update_resolution(
-    mut event_reader: Local<EventReader<WindowResized>>,
-    events: Res<Events<WindowResized>>,
+    mut event_reader: EventReader<WindowResized>,
     mut background: Query<&mut ShaderInputs>,
 ) {
-    for event in event_reader.iter(&events) {
+    for event in event_reader.iter() {
         for mut node in background.iter_mut() {
             node.resolution = Vec2::new(event.width / event.height, 1.);
         }

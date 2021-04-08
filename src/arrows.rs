@@ -11,10 +11,12 @@ struct ArrowMaterialResource {
     green_texture: Handle<ColorMaterial>,
     border_texture: Handle<ColorMaterial>,
 }
-impl FromResources for ArrowMaterialResource {
-    fn from_resources(resources: &Resources) -> Self {
-        let mut materials = resources.get_mut::<Assets<ColorMaterial>>().unwrap();
-        let asset_server = resources.get::<AssetServer>().unwrap();
+impl FromWorld for ArrowMaterialResource {
+    fn from_world(world: &mut World) -> Self {
+        let world = world.cell();
+
+        let mut materials = world.get_resource_mut::<Assets<ColorMaterial>>().unwrap();
+        let asset_server = world.get_resource::<AssetServer>().unwrap();
 
         let red_handle = asset_server.load("images/arrow_red.png");
         let blue_handle = asset_server.load("images/arrow_blue.png");
@@ -30,7 +32,7 @@ impl FromResources for ArrowMaterialResource {
 }
 
 struct TargetArrow;
-fn setup_target_arrows(commands: &mut Commands, materials: Res<ArrowMaterialResource>) {
+fn setup_target_arrows(mut commands: Commands, materials: Res<ArrowMaterialResource>) {
     use Directions::*;
     let directions = [Up, Down, Left, Right];
 
@@ -39,13 +41,13 @@ fn setup_target_arrows(commands: &mut Commands, materials: Res<ArrowMaterialReso
             Transform::from_translation(Vec3::new(TARGET_POSITION, direction.y(), 1.));
         transform.rotate(Quat::from_rotation_z(direction.rotation()));
         commands
-            .spawn(SpriteBundle {
+            .spawn_bundle(SpriteBundle {
                 material: materials.border_texture.clone(),
                 sprite: Sprite::new(Vec2::new(140., 140.)),
                 transform,
                 ..Default::default()
             })
-            .with(TargetArrow);
+            .insert(TargetArrow);
     }
 }
 
@@ -57,7 +59,7 @@ struct Arrow {
 
 /// Spawns arrows
 fn spawn_arrows(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut song_config: ResMut<SongConfig>,
     materials: Res<ArrowMaterialResource>,
     time: Res<ControlledTime>,
@@ -89,13 +91,13 @@ fn spawn_arrows(
             // Rotate the arrow acording to direction
             transform.rotate(Quat::from_rotation_z(arrow.direction.rotation()));
             commands
-                .spawn(SpriteBundle {
+                .spawn_bundle(SpriteBundle {
                     material,
                     sprite: Sprite::new(Vec2::new(140., 140.)),
                     transform,
                     ..Default::default()
                 })
-                .with(Arrow {
+                .insert(Arrow {
                     speed: arrow.speed,
                     direction: arrow.direction,
                 });
@@ -139,11 +141,11 @@ pub struct CorrectArrowEvent {
 
 /// Despawns arrows when they reach the end if the correct button is clicked
 fn despawn_arrows(
-    commands: &mut Commands,
+    mut commands: Commands,
     query: Query<(Entity, &Transform, &Arrow)>,
     keyboard_input: Res<Input<KeyCode>>,
     mut score: ResMut<ScoreResource>,
-    mut correct_arrow_events: ResMut<Events<CorrectArrowEvent>>,
+    mut correct_arrow_events: EventWriter<CorrectArrowEvent>,
 ) {
     for (entity, transform, arrow) in query.iter() {
         let pos = transform.translation.x;
@@ -152,7 +154,7 @@ fn despawn_arrows(
         if (TARGET_POSITION - THRESHOLD..=TARGET_POSITION + THRESHOLD).contains(&pos)
             && arrow.direction.key_just_pressed(&keyboard_input)
         {
-            commands.despawn(entity);
+            commands.entity(entity).despawn();
 
             let points = score.increase_correct(TARGET_POSITION - pos);
 
@@ -164,7 +166,7 @@ fn despawn_arrows(
 
         // Despawn arrows after they leave the screen
         if pos >= 2. * TARGET_POSITION {
-            commands.despawn(entity);
+            commands.entity(entity).despawn();
             score.increase_fails();
         }
     }
@@ -174,14 +176,15 @@ pub struct ArrowsPlugin;
 impl Plugin for ArrowsPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ArrowMaterialResource>()
-            .init_resource::<Events<CorrectArrowEvent>>()
-            .on_state_enter(
-                APP_STATE_STAGE,
-                AppState::Game,
-                setup_target_arrows.system(),
+            .add_event::<CorrectArrowEvent>()
+            .add_system_set(
+                SystemSet::on_enter(AppState::Game).with_system(setup_target_arrows.system()),
             )
-            .on_state_update(APP_STATE_STAGE, AppState::Game, spawn_arrows.system())
-            .on_state_update(APP_STATE_STAGE, AppState::Game, move_arrows.system())
-            .on_state_update(APP_STATE_STAGE, AppState::Game, despawn_arrows.system());
+            .add_system_set(
+                SystemSet::on_update(AppState::Game)
+                    .with_system(spawn_arrows.system())
+                    .with_system(move_arrows.system())
+                    .with_system(despawn_arrows.system()),
+            );
     }
 }

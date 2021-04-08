@@ -10,10 +10,12 @@ struct ButtonMaterials {
     font: Handle<Font>,
 }
 
-impl FromResources for ButtonMaterials {
-    fn from_resources(resources: &Resources) -> Self {
-        let mut materials = resources.get_mut::<Assets<ColorMaterial>>().unwrap();
-        let asset_server = resources.get_mut::<AssetServer>().unwrap();
+impl FromWorld for ButtonMaterials {
+    fn from_world(world: &mut World) -> Self {
+        let world = world.cell();
+
+        let mut materials = world.get_resource_mut::<Assets<ColorMaterial>>().unwrap();
+        let asset_server = world.get_resource_mut::<AssetServer>().unwrap();
         ButtonMaterials {
             none: materials.add(Color::NONE.into()),
             normal: materials.add(Color::rgb(0.15, 0.15, 0.15).into()),
@@ -38,7 +40,7 @@ impl MenuButton {
 }
 
 struct MenuUI;
-fn setup_menu(commands: &mut Commands, button_materials: Res<ButtonMaterials>) {
+fn setup_menu(mut commands: Commands, button_materials: Res<ButtonMaterials>) {
     // Make list of buttons
     let mut buttons: Vec<MenuButton> = get_songs()
         .iter()
@@ -47,7 +49,7 @@ fn setup_menu(commands: &mut Commands, button_materials: Res<ButtonMaterials>) {
     buttons.push(MenuButton::MakeMap);
 
     commands
-        .spawn(NodeBundle {
+        .spawn_bundle(NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.), Val::Percent(100.)),
                 display: Display::Flex,
@@ -59,13 +61,13 @@ fn setup_menu(commands: &mut Commands, button_materials: Res<ButtonMaterials>) {
             material: button_materials.none.clone(),
             ..Default::default()
         })
-        .with(MenuUI)
+        .insert(MenuUI)
         .with_children(|parent| {
             // Add all of the buttons as children
             for button in buttons {
                 // Spawn a new button
                 parent
-                    .spawn(ButtonBundle {
+                    .spawn_bundle(ButtonBundle {
                         style: Style {
                             size: Size::new(Val::Px(350.0), Val::Px(65.0)),
                             margin: Rect::all(Val::Auto),
@@ -77,27 +79,27 @@ fn setup_menu(commands: &mut Commands, button_materials: Res<ButtonMaterials>) {
                         ..Default::default()
                     })
                     .with_children(|parent| {
-                        parent.spawn(TextBundle {
-                            text: Text {
-                                value: button.name(),
-                                font: button_materials.font.clone(),
-                                style: TextStyle {
+                        parent.spawn_bundle(TextBundle {
+                            text: Text::with_section(
+                                button.name(),
+                                TextStyle {
+                                    font: button_materials.font.clone(),
                                     font_size: 20.0,
                                     color: Color::rgb(0.9, 0.9, 0.9),
-                                    ..Default::default()
                                 },
-                            },
+                                Default::default(),
+                            ),
                             ..Default::default()
                         });
                     })
-                    .with(button);
+                    .insert(button);
             }
         });
 }
 
-fn despawn_menu(commands: &mut Commands, query: Query<(Entity, &MenuUI)>) {
+fn despawn_menu(mut commands: Commands, query: Query<(Entity, &MenuUI)>) {
     for (entity, _) in query.iter() {
-        commands.despawn_recursive(entity);
+        commands.entity(entity).despawn_recursive();
     }
 }
 
@@ -105,7 +107,7 @@ fn button_color_system(
     button_materials: Res<ButtonMaterials>,
     mut query: Query<
         (&Interaction, &mut Handle<ColorMaterial>),
-        (Mutated<Interaction>, With<Button>),
+        (Changed<Interaction>, With<Button>),
     >,
 ) {
     for (interaction, mut material) in query.iter_mut() {
@@ -124,22 +126,22 @@ fn button_color_system(
 }
 
 fn button_press_system(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
-    query: Query<(&Interaction, &MenuButton), (Mutated<Interaction>, With<Button>)>,
+    query: Query<(&Interaction, &MenuButton), (Changed<Interaction>, With<Button>)>,
     mut state: ResMut<State<AppState>>,
 ) {
     for (interaction, button) in query.iter() {
         if *interaction == Interaction::Clicked {
             match button {
                 MenuButton::MakeMap => state
-                    .set_next(AppState::MakeMap)
+                    .set(AppState::MakeMap)
                     .expect("Couldn't switch state to MakeMap"),
                 MenuButton::PlaySong(song) => {
                     let config = load_config(&*format!("{}.toml", song), &asset_server);
                     commands.insert_resource(config);
                     state
-                        .set_next(AppState::Game)
+                        .set(AppState::Game)
                         .expect("Couldn't switch state to Game")
                 }
             };
@@ -173,17 +175,12 @@ pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ButtonMaterials>()
-            .on_state_enter(APP_STATE_STAGE, AppState::Menu, setup_menu.system())
-            .on_state_update(
-                APP_STATE_STAGE,
-                AppState::Menu,
-                button_color_system.system(),
+            .add_system_set(SystemSet::on_enter(AppState::Menu).with_system(setup_menu.system()))
+            .add_system_set(
+                SystemSet::on_update(AppState::Menu)
+                    .with_system(button_color_system.system())
+                    .with_system(button_press_system.system()),
             )
-            .on_state_update(
-                APP_STATE_STAGE,
-                AppState::Menu,
-                button_press_system.system(),
-            )
-            .on_state_exit(APP_STATE_STAGE, AppState::Menu, despawn_menu.system());
+            .add_system_set(SystemSet::on_exit(AppState::Menu).with_system(despawn_menu.system()));
     }
 }

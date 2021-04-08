@@ -23,20 +23,15 @@ use map_maker::MapMakerPlugin;
 fn main() {
     App::build()
         // Set antialiasing to use 4 samples
-        .add_resource(Msaa { samples: 4 })
+        .insert_resource(Msaa { samples: 4 })
         // Set WindowDescriptor Resource to change title and size
-        .add_resource(WindowDescriptor {
+        .insert_resource(WindowDescriptor {
             title: "Rhythm!".to_string(),
             width: 800.,
             height: 600.,
             ..Default::default()
         })
-        .add_resource(State::new(AppState::Menu))
-        .add_stage_after(
-            stage::UPDATE,
-            APP_STATE_STAGE,
-            StateStage::<AppState>::default(),
-        )
+        .add_state(AppState::Menu)
         .init_resource::<ScoreResource>()
         .add_startup_system(setup.system())
         .add_system(exit_on_esc_system.system())
@@ -51,8 +46,9 @@ fn main() {
         .run();
 }
 
-fn setup(commands: &mut Commands) {
+fn setup(mut commands: Commands) {
     commands
-        .spawn(Camera2dBundle::default())
-        .spawn(CameraUiBundle::default());
+        .spawn_bundle(OrthographicCameraBundle::new_2d())
+        .commands()
+        .spawn_bundle(UiCameraBundle::default());
 }

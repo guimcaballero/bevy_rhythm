@@ -79,17 +79,17 @@ pub struct TimePlugin;
 impl Plugin for TimePlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ControlledTime>()
-            .on_state_update(APP_STATE_STAGE, AppState::Game, update_time.system())
-            .on_state_update(APP_STATE_STAGE, AppState::MakeMap, update_time.system())
-            .on_state_enter(
-                APP_STATE_STAGE,
-                AppState::Game,
-                reset_time_when_entering_game.system(),
+            .add_system_set(
+                SystemSet::on_enter(AppState::Game)
+                    .with_system(reset_time_when_entering_game.system()),
             )
-            .on_state_enter(
-                APP_STATE_STAGE,
-                AppState::MakeMap,
-                reset_time_when_entering_game.system(),
+            .add_system_set(
+                SystemSet::on_enter(AppState::MakeMap)
+                    .with_system(reset_time_when_entering_game.system()),
+            )
+            .add_system_set(SystemSet::on_update(AppState::Game).with_system(update_time.system()))
+            .add_system_set(
+                SystemSet::on_update(AppState::MakeMap).with_system(update_time.system()),
             );
     }
 }

@@ -2,7 +2,7 @@ use super::*;
 
 pub struct Background;
 pub fn setup_background(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut pipelines: ResMut<Assets<PipelineDescriptor>>,
     mut shaders: ResMut<Assets<Shader>>,
     window: Res<WindowDescriptor>,
@@ -20,7 +20,7 @@ pub fn setup_background(
     }));
 
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
                 pipeline_handle,
             )]),
@@ -31,19 +31,18 @@ pub fn setup_background(
             )),
             ..Default::default()
         })
-        .with(Background)
-        .with(ShaderInputs {
+        .insert(Background)
+        .insert(ShaderInputs {
             time: 0.,
             resolution: Vec2::new(window.width / window.height, 1.),
         });
 }
 
 pub fn update_background_size(
-    mut event_reader: Local<EventReader<WindowResized>>,
-    events: Res<Events<WindowResized>>,
+    mut event_reader: EventReader<WindowResized>,
     mut background: Query<(&mut Transform, &Background)>,
 ) {
-    for event in event_reader.iter(&events) {
+    for event in event_reader.iter() {
         for (mut transform, _) in background.iter_mut() {
             transform.scale = Vec3::new(event.width, event.height, 1.);
         }
