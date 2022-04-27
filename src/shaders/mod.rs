@@ -16,7 +16,7 @@ use background::*;
 mod target_arrows;
 use target_arrows::*;
 
-#[derive(RenderResources, Default, TypeUuid)]
+#[derive(RenderResources, Default, TypeUuid, Component)]
 #[uuid = "0320b9b8-b3a3-4baa-8bfa-c94008177b17"]
 /// Resource that will be passed to shaders
 pub struct ShaderInputs {
@@ -54,15 +54,15 @@ fn setup_render_graph(mut render_graph: ResMut<RenderGraph>) {
 
 pub struct ShadersPlugin;
 impl Plugin for ShadersPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_asset::<ShaderInputs>()
             .add_asset::<TimeSinceLastCorrect>()
-            .add_startup_system(setup_render_graph.system())
-            .add_system(update_time.system())
-            .add_system(update_resolution.system())
-            .add_startup_system(setup_background.system())
-            .add_system(update_background_size.system())
-            .add_startup_system(setup_target_arrows.system())
-            .add_system(correct_arrow_event_listener.system());
+            .add_startup_system(setup_render_graph)
+            .add_system(update_time)
+            .add_system(update_resolution)
+            .add_startup_system(setup_background)
+            .add_system(update_background_size)
+            .add_startup_system(setup_target_arrows)
+            .add_system(correct_arrow_event_listener);
     }
 }

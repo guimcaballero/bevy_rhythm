@@ -1,6 +1,8 @@
 use super::*;
 
+#[derive(Component)]
 pub struct Background;
+
 pub fn setup_background(
     mut commands: Commands,
     mut pipelines: ResMut<Assets<PipelineDescriptor>>,

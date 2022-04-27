@@ -2,12 +2,13 @@
 name = "bevy_rhythm"
 version = "0.1.0"
 authors = ["Guim Caballero <guim@caballerocoll.com>"]
-edition = "2018"
+edition = "2021"
+resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.5"
+bevy = { version = "0.7", features = ["wayland", "mp3"] }
 toml = "0.5.8"
 serde = "1.0.118"
 serde_derive = "1.0.118"

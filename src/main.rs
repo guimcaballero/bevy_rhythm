@@ -11,8 +11,8 @@ mod score;
 use score::ScoreResource;
 mod audio;
 use audio::AudioPlugin;
-mod shaders;
-use shaders::ShadersPlugin;
+//mod shaders;
+//use shaders::ShadersPlugin;
 mod menu;
 use menu::MenuPlugin;
 mod time;
@@ -21,7 +21,7 @@ mod map_maker;
 use map_maker::MapMakerPlugin;
 
 fn main() {
-    App::build()
+    App::new()
         // Set antialiasing to use 4 samples
         .insert_resource(Msaa { samples: 4 })
         // Set WindowDescriptor Resource to change title and size
@@ -33,13 +33,13 @@ fn main() {
         })
         .add_state(AppState::Menu)
         .init_resource::<ScoreResource>()
-        .add_startup_system(setup.system())
-        .add_system(exit_on_esc_system.system())
+        .add_startup_system(setup)
+        .add_system(exit_on_esc_system)
         .add_plugins(DefaultPlugins)
         .add_plugin(ArrowsPlugin)
         .add_plugin(UIPlugin)
         .add_plugin(AudioPlugin)
-        .add_plugin(ShadersPlugin)
+        //.add_plugin(ShadersPlugin)
         .add_plugin(MenuPlugin)
         .add_plugin(TimePlugin)
         .add_plugin(MapMakerPlugin)

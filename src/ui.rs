@@ -6,10 +6,9 @@ use bevy::prelude::*;
 fn setup_ui(
     mut commands: Commands,
     asset_server: ResMut<AssetServer>,
-    mut color_materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
-    let material = color_materials.add(Color::NONE.into());
+    let color = UiColor(Color::NONE);
 
     commands
         // Time text node
@@ -23,7 +22,7 @@ fn setup_ui(
                 },
                 ..Default::default()
             },
-            material: material.clone(),
+            color,
             ..Default::default()
         })
         .with_children(|parent| {
@@ -53,7 +52,7 @@ fn setup_ui(
                 },
                 ..Default::default()
             },
-            material,
+            color,
             ..Default::default()
         })
         .with_children(|parent| {
@@ -74,6 +73,7 @@ fn setup_ui(
         });
 }
 
+#[derive(Component)]
 struct TimeText;
 
 fn update_time_text(time: Res<ControlledTime>, mut query: Query<(&mut Text, &TimeText)>) {
@@ -90,7 +90,9 @@ fn update_time_text(time: Res<ControlledTime>, mut query: Query<(&mut Text, &Tim
     }
 }
 
+#[derive(Component)]
 struct ScoreText;
+
 fn update_score_text(score: Res<ScoreResource>, mut query: Query<(&mut Text, &ScoreText)>) {
     if !score.is_changed() {
         return;
@@ -108,12 +110,12 @@ fn update_score_text(score: Res<ScoreResource>, mut query: Query<(&mut Text, &Sc
 
 pub struct UIPlugin;
 impl Plugin for UIPlugin {
-    fn build(&self, app: &mut AppBuilder) {
-        app.add_system_set(SystemSet::on_enter(AppState::Game).with_system(setup_ui.system()))
+    fn build(&self, app: &mut App) {
+        app.add_system_set(SystemSet::on_enter(AppState::Game).with_system(setup_ui))
             .add_system_set(
                 SystemSet::on_update(AppState::Game)
-                    .with_system(update_time_text.system())
-                    .with_system(update_score_text.system()),
+                    .with_system(update_time_text)
+                    .with_system(update_score_text),
             );
     }
 }

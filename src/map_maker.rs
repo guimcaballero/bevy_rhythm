@@ -46,13 +46,14 @@ fn save_to_file_on_exit(mut event_reader: EventReader<AppExit>, presses: Res<Pre
     }
 }
 
+#[derive(Component)]
 struct MapMakerArrow(Directions);
+
 fn setup_map_maker_arrows(
     mut commands: Commands,
-    mut materials: ResMut<Assets<ColorMaterial>>,
     asset_server: ResMut<AssetServer>,
 ) {
-    let border_handle = materials.add(asset_server.load("images/arrow_border.png").into());
+    let border_handle = asset_server.load("images/arrow_border.png");
 
     let directions = [Up, Down, Left, Right];
     for direction in directions.iter() {
@@ -67,8 +68,11 @@ fn setup_map_maker_arrows(
         transform.rotate(Quat::from_rotation_z(direction.rotation()));
         commands
             .spawn_bundle(SpriteBundle {
-                material: border_handle.clone(),
-                sprite: Sprite::new(Vec2::new(140., 140.)),
+                texture: border_handle.clone(),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(140., 140.)),
+                    ..Default::default()
+                },
                 transform,
                 ..Default::default()
             })
@@ -77,11 +81,11 @@ fn setup_map_maker_arrows(
 }
 
 fn toggle_map_maker_arrows(
-    mut query: Query<(&mut Visible, &MapMakerArrow)>,
+    mut query: Query<(&mut Visibility, &MapMakerArrow)>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
-    for (mut visible, arrow) in query.iter_mut() {
-        visible.is_visible = arrow.0.key_pressed(&keyboard_input);
+    for (mut visibility, arrow) in query.iter_mut() {
+        visibility.is_visible = arrow.0.key_pressed(&keyboard_input);
     }
 }
 
@@ -101,19 +105,19 @@ fn start_song(audio: Res<Audio>, map_maker_audio: Res<MapMakerAudio>) {
 
 pub struct MapMakerPlugin;
 impl Plugin for MapMakerPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.init_resource::<Presses>()
             .init_resource::<MapMakerAudio>()
             .add_system_set(
                 SystemSet::on_enter(AppState::MakeMap)
-                    .with_system(setup_map_maker_arrows.system())
-                    .with_system(start_song.system()),
+                    .with_system(setup_map_maker_arrows)
+                    .with_system(start_song),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::Game)
-                    .with_system(toggle_map_maker_arrows.system())
-                    .with_system(save_to_file_on_exit.system())
-                    .with_system(save_key_presses.system()),
+                    .with_system(toggle_map_maker_arrows)
+                    .with_system(save_to_file_on_exit)
+                    .with_system(save_key_presses),
             );
     }
 }

@@ -15,7 +15,7 @@ fn start_song(audio: Res<Audio>, time: Res<ControlledTime>, config: Res<SongConf
 
 pub struct AudioPlugin;
 impl Plugin for AudioPlugin {
-    fn build(&self, app: &mut AppBuilder) {
-        app.add_system_set(SystemSet::on_update(AppState::Game).with_system(start_song.system()));
+    fn build(&self, app: &mut App) {
+        app.add_system_set(SystemSet::on_update(AppState::Game).with_system(start_song));
     }
 }
