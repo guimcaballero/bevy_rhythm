@@ -81,11 +81,11 @@ fn setup_map_maker_arrows(
 }
 
 fn toggle_map_maker_arrows(
-    mut query: Query<(&mut Visible, &MapMakerArrow)>,
+    mut query: Query<(&mut Visibility, &MapMakerArrow)>,
     keyboard_input: Res<Input<KeyCode>>,
 ) {
-    for (mut visible, arrow) in query.iter_mut() {
-        visible.is_visible = arrow.0.key_pressed(&keyboard_input);
+    for (mut visibility, arrow) in query.iter_mut() {
+        visibility.is_visible = arrow.0.key_pressed(&keyboard_input);
     }
 }
 

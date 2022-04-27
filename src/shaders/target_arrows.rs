@@ -49,10 +49,6 @@ pub fn setup_target_arrows(
                     pipeline_handle.clone(),
                 )]),
                 transform,
-                visible: Visible {
-                    is_transparent: true,
-                    ..Default::default()
-                },
                 ..Default::default()
             })
             .insert(TargetArrowSparkle {
