@@ -54,7 +54,7 @@ fn setup_render_graph(mut render_graph: ResMut<RenderGraph>) {
 
 pub struct ShadersPlugin;
 impl Plugin for ShadersPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_asset::<ShaderInputs>()
             .add_asset::<TimeSinceLastCorrect>()
             .add_startup_system(setup_render_graph)

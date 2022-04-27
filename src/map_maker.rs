@@ -105,7 +105,7 @@ fn start_song(audio: Res<Audio>, map_maker_audio: Res<MapMakerAudio>) {
 
 pub struct MapMakerPlugin;
 impl Plugin for MapMakerPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.init_resource::<Presses>()
             .init_resource::<MapMakerAudio>()
             .add_system_set(

@@ -182,7 +182,7 @@ fn despawn_arrows(
 
 pub struct ArrowsPlugin;
 impl Plugin for ArrowsPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.init_resource::<ArrowMaterialResource>()
             .add_event::<CorrectArrowEvent>()
             .add_system_set(

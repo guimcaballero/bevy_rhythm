@@ -176,7 +176,7 @@ pub fn get_songs() -> Vec<String> {
 
 pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.init_resource::<ButtonMaterials>()
             .add_system_set(SystemSet::on_enter(AppState::Menu).with_system(setup_menu))
             .add_system_set(

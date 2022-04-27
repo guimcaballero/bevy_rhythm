@@ -77,7 +77,7 @@ pub fn reset_time_when_entering_game(mut time: ResMut<ControlledTime>) {
 
 pub struct TimePlugin;
 impl Plugin for TimePlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.init_resource::<ControlledTime>()
             .add_system_set(
                 SystemSet::on_enter(AppState::Game)
