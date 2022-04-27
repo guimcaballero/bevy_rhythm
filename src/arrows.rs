@@ -44,7 +44,10 @@ fn setup_target_arrows(mut commands: Commands, materials: Res<ArrowMaterialResou
         commands
             .spawn_bundle(SpriteBundle {
                 texture: materials.border_texture.clone(),
-                sprite: Sprite::new(Vec2::new(140., 140.)),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(140., 140.)),
+                    ..Default::default()
+                },
                 transform,
                 ..Default::default()
             })
@@ -95,7 +98,10 @@ fn spawn_arrows(
             commands
                 .spawn_bundle(SpriteBundle {
                     texture,
-                    sprite: Sprite::new(Vec2::new(140., 140.)),
+                    sprite: Sprite {
+                        custom_size: Some(Vec2::new(140., 140.)),
+                        ..Default::default()
+                    },
                     transform,
                     ..Default::default()
                 })

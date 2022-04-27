@@ -69,7 +69,10 @@ fn setup_map_maker_arrows(
         commands
             .spawn_bundle(SpriteBundle {
                 texture: border_handle.clone(),
-                sprite: Sprite::new(Vec2::new(140., 140.)),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(140., 140.)),
+                    ..Default::default()
+                },
                 transform,
                 ..Default::default()
             })
