@@ -3,10 +3,10 @@ use crate::types::load_config;
 use bevy::prelude::*;
 
 struct ButtonMaterials {
-    none: Handle<ColorMaterial>,
-    normal: Handle<ColorMaterial>,
-    hovered: Handle<ColorMaterial>,
-    pressed: Handle<ColorMaterial>,
+    none: UiColor,
+    normal: UiColor,
+    hovered: UiColor,
+    pressed: UiColor,
     font: Handle<Font>,
 }
 
@@ -14,13 +14,12 @@ impl FromWorld for ButtonMaterials {
     fn from_world(world: &mut World) -> Self {
         let world = world.cell();
 
-        let mut materials = world.get_resource_mut::<Assets<ColorMaterial>>().unwrap();
         let asset_server = world.get_resource_mut::<AssetServer>().unwrap();
         ButtonMaterials {
-            none: materials.add(Color::NONE.into()),
-            normal: materials.add(Color::rgb(0.15, 0.15, 0.15).into()),
-            hovered: materials.add(Color::rgb(0.25, 0.25, 0.25).into()),
-            pressed: materials.add(Color::rgb(0.35, 0.75, 0.35).into()),
+            none: UiColor(Color::NONE),
+            normal: UiColor(Color::rgb(0.15, 0.15, 0.15)),
+            hovered: UiColor(Color::rgb(0.25, 0.25, 0.25)),
+            pressed: UiColor(Color::rgb(0.35, 0.75, 0.35)),
             font: asset_server.load("fonts/FiraSans-Bold.ttf"),
         }
     }
@@ -62,7 +61,7 @@ fn setup_menu(mut commands: Commands, button_materials: Res<ButtonMaterials>) {
                 justify_content: JustifyContent::FlexStart,
                 ..Default::default()
             },
-            material: button_materials.none.clone(),
+            color: button_materials.none,
             ..Default::default()
         })
         .insert(MenuUI)
@@ -79,7 +78,7 @@ fn setup_menu(mut commands: Commands, button_materials: Res<ButtonMaterials>) {
                             align_items: AlignItems::Center,
                             ..Default::default()
                         },
-                        material: button_materials.normal.clone(),
+                        color: button_materials.normal,
                         ..Default::default()
                     })
                     .with_children(|parent| {
@@ -110,20 +109,20 @@ fn despawn_menu(mut commands: Commands, query: Query<(Entity, &MenuUI)>) {
 fn button_color_system(
     button_materials: Res<ButtonMaterials>,
     mut query: Query<
-        (&Interaction, &mut Handle<ColorMaterial>),
+        (&Interaction, &mut UiColor),
         (Changed<Interaction>, With<Button>),
     >,
 ) {
-    for (interaction, mut material) in query.iter_mut() {
+    for (interaction, mut color) in query.iter_mut() {
         match *interaction {
             Interaction::Clicked => {
-                *material = button_materials.pressed.clone();
+                *color = button_materials.pressed;
             }
             Interaction::Hovered => {
-                *material = button_materials.hovered.clone();
+                *color = button_materials.hovered;
             }
             Interaction::None => {
-                *material = button_materials.normal.clone();
+                *color = button_materials.normal;
             }
         }
     }

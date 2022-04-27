@@ -6,10 +6,9 @@ use bevy::prelude::*;
 fn setup_ui(
     mut commands: Commands,
     asset_server: ResMut<AssetServer>,
-    mut color_materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let font: Handle<Font> = asset_server.load("fonts/FiraSans-Bold.ttf");
-    let material = color_materials.add(Color::NONE.into());
+    let color = UiColor(Color::NONE);
 
     commands
         // Time text node
@@ -23,7 +22,7 @@ fn setup_ui(
                 },
                 ..Default::default()
             },
-            material: material.clone(),
+            color,
             ..Default::default()
         })
         .with_children(|parent| {
@@ -53,7 +52,7 @@ fn setup_ui(
                 },
                 ..Default::default()
             },
-            material,
+            color,
             ..Default::default()
         })
         .with_children(|parent| {
