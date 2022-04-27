@@ -31,7 +31,9 @@ impl FromWorld for ArrowMaterialResource {
     }
 }
 
+#[derive(Component)]
 struct TargetArrow;
+
 fn setup_target_arrows(mut commands: Commands, materials: Res<ArrowMaterialResource>) {
     use Directions::*;
     let directions = [Up, Down, Left, Right];
@@ -52,6 +54,7 @@ fn setup_target_arrows(mut commands: Commands, materials: Res<ArrowMaterialResou
 }
 
 /// Actual component that goes on the sprites
+#[derive(Component)]
 struct Arrow {
     speed: Speed,
     direction: Directions,

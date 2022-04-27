@@ -46,7 +46,9 @@ fn save_to_file_on_exit(mut event_reader: EventReader<AppExit>, presses: Res<Pre
     }
 }
 
+#[derive(Component)]
 struct MapMakerArrow(Directions);
+
 fn setup_map_maker_arrows(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,

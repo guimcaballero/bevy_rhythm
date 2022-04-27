@@ -26,10 +26,12 @@ impl FromWorld for ButtonMaterials {
     }
 }
 
+#[derive(Component)]
 enum MenuButton {
     MakeMap,
     PlaySong(String),
 }
+
 impl MenuButton {
     fn name(&self) -> String {
         match self {
@@ -39,7 +41,9 @@ impl MenuButton {
     }
 }
 
+#[derive(Component)]
 struct MenuUI;
+
 fn setup_menu(mut commands: Commands, button_materials: Res<ButtonMaterials>) {
     // Make list of buttons
     let mut buttons: Vec<MenuButton> = get_songs()

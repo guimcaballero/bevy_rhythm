@@ -74,6 +74,7 @@ fn setup_ui(
         });
 }
 
+#[derive(Component)]
 struct TimeText;
 
 fn update_time_text(time: Res<ControlledTime>, mut query: Query<(&mut Text, &TimeText)>) {
@@ -90,7 +91,9 @@ fn update_time_text(time: Res<ControlledTime>, mut query: Query<(&mut Text, &Tim
     }
 }
 
+#[derive(Component)]
 struct ScoreText;
+
 fn update_score_text(score: Res<ScoreResource>, mut query: Query<(&mut Text, &ScoreText)>) {
     if !score.is_changed() {
         return;

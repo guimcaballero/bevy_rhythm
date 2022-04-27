@@ -16,7 +16,7 @@ use background::*;
 mod target_arrows;
 use target_arrows::*;
 
-#[derive(RenderResources, Default, TypeUuid)]
+#[derive(RenderResources, Default, TypeUuid, Component)]
 #[uuid = "0320b9b8-b3a3-4baa-8bfa-c94008177b17"]
 /// Resource that will be passed to shaders
 pub struct ShaderInputs {

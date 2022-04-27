@@ -69,13 +69,14 @@ pub fn setup_target_arrows(
     }
 }
 
-#[derive(RenderResources, TypeUuid)]
+#[derive(RenderResources, TypeUuid, Component)]
 #[uuid = "c9400817-b3a3-4baa-8bfa-0320b9b87b17"]
 pub struct TimeSinceLastCorrect {
     last_time: f32,
     points: f32,
 }
 
+#[derive(Component)]
 pub struct TargetArrowSparkle {
     direction: Directions,
 }
