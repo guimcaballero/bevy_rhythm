@@ -51,10 +51,9 @@ struct MapMakerArrow(Directions);
 
 fn setup_map_maker_arrows(
     mut commands: Commands,
-    mut materials: ResMut<Assets<ColorMaterial>>,
     asset_server: ResMut<AssetServer>,
 ) {
-    let border_handle = materials.add(asset_server.load("images/arrow_border.png").into());
+    let border_handle = asset_server.load("images/arrow_border.png");
 
     let directions = [Up, Down, Left, Right];
     for direction in directions.iter() {
@@ -69,7 +68,7 @@ fn setup_map_maker_arrows(
         transform.rotate(Quat::from_rotation_z(direction.rotation()));
         commands
             .spawn_bundle(SpriteBundle {
-                material: border_handle.clone(),
+                texture: border_handle.clone(),
                 sprite: Sprite::new(Vec2::new(140., 140.)),
                 transform,
                 ..Default::default()

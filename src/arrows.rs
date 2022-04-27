@@ -6,27 +6,26 @@ use bevy::prelude::*;
 
 /// Keeps the textures and materials for Arrows
 struct ArrowMaterialResource {
-    red_texture: Handle<ColorMaterial>,
-    blue_texture: Handle<ColorMaterial>,
-    green_texture: Handle<ColorMaterial>,
-    border_texture: Handle<ColorMaterial>,
+    red_texture: Handle<Image>,
+    blue_texture: Handle<Image>,
+    green_texture: Handle<Image>,
+    border_texture: Handle<Image>,
 }
 impl FromWorld for ArrowMaterialResource {
     fn from_world(world: &mut World) -> Self {
         let world = world.cell();
 
-        let mut materials = world.get_resource_mut::<Assets<ColorMaterial>>().unwrap();
         let asset_server = world.get_resource::<AssetServer>().unwrap();
 
-        let red_handle = asset_server.load("images/arrow_red.png");
-        let blue_handle = asset_server.load("images/arrow_blue.png");
-        let green_handle = asset_server.load("images/arrow_green.png");
-        let border_handle = asset_server.load("images/arrow_border.png");
+        let red_texture = asset_server.load("images/arrow_red.png");
+        let blue_texture = asset_server.load("images/arrow_blue.png");
+        let green_texture = asset_server.load("images/arrow_green.png");
+        let border_texture = asset_server.load("images/arrow_border.png");
         ArrowMaterialResource {
-            red_texture: materials.add(red_handle.into()),
-            blue_texture: materials.add(blue_handle.into()),
-            green_texture: materials.add(green_handle.into()),
-            border_texture: materials.add(border_handle.into()),
+            red_texture,
+            blue_texture,
+            green_texture,
+            border_texture,
         }
     }
 }
@@ -44,7 +43,7 @@ fn setup_target_arrows(mut commands: Commands, materials: Res<ArrowMaterialResou
         transform.rotate(Quat::from_rotation_z(direction.rotation()));
         commands
             .spawn_bundle(SpriteBundle {
-                material: materials.border_texture.clone(),
+                texture: materials.border_texture.clone(),
                 sprite: Sprite::new(Vec2::new(140., 140.)),
                 transform,
                 ..Default::default()
@@ -82,8 +81,8 @@ fn spawn_arrows(
         if secs_last < arrow.spawn_time && arrow.spawn_time < secs {
             remove_counter += 1;
 
-            // Get the correct material according to speed
-            let material = match arrow.speed {
+            // Get the correct texture according to speed
+            let texture = match arrow.speed {
                 Speed::Slow => materials.red_texture.clone(),
                 Speed::Medium => materials.blue_texture.clone(),
                 Speed::Fast => materials.green_texture.clone(),
@@ -95,7 +94,7 @@ fn spawn_arrows(
             transform.rotate(Quat::from_rotation_z(arrow.direction.rotation()));
             commands
                 .spawn_bundle(SpriteBundle {
-                    material,
+                    texture,
                     sprite: Sprite::new(Vec2::new(140., 140.)),
                     transform,
                     ..Default::default()
