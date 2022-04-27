@@ -11,8 +11,8 @@ mod score;
 use score::ScoreResource;
 mod audio;
 use audio::AudioPlugin;
-mod shaders;
-use shaders::ShadersPlugin;
+//mod shaders;
+//use shaders::ShadersPlugin;
 mod menu;
 use menu::MenuPlugin;
 mod time;
@@ -39,7 +39,7 @@ fn main() {
         .add_plugin(ArrowsPlugin)
         .add_plugin(UIPlugin)
         .add_plugin(AudioPlugin)
-        .add_plugin(ShadersPlugin)
+        //.add_plugin(ShadersPlugin)
         .add_plugin(MenuPlugin)
         .add_plugin(TimePlugin)
         .add_plugin(MapMakerPlugin)
