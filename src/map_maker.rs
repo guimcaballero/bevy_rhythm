@@ -110,14 +110,14 @@ impl Plugin for MapMakerPlugin {
             .init_resource::<MapMakerAudio>()
             .add_system_set(
                 SystemSet::on_enter(AppState::MakeMap)
-                    .with_system(setup_map_maker_arrows.system())
-                    .with_system(start_song.system()),
+                    .with_system(setup_map_maker_arrows)
+                    .with_system(start_song),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::Game)
-                    .with_system(toggle_map_maker_arrows.system())
-                    .with_system(save_to_file_on_exit.system())
-                    .with_system(save_key_presses.system()),
+                    .with_system(toggle_map_maker_arrows)
+                    .with_system(save_to_file_on_exit)
+                    .with_system(save_key_presses),
             );
     }
 }

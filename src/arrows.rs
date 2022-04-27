@@ -186,13 +186,13 @@ impl Plugin for ArrowsPlugin {
         app.init_resource::<ArrowMaterialResource>()
             .add_event::<CorrectArrowEvent>()
             .add_system_set(
-                SystemSet::on_enter(AppState::Game).with_system(setup_target_arrows.system()),
+                SystemSet::on_enter(AppState::Game).with_system(setup_target_arrows),
             )
             .add_system_set(
                 SystemSet::on_update(AppState::Game)
-                    .with_system(spawn_arrows.system())
-                    .with_system(move_arrows.system())
-                    .with_system(despawn_arrows.system()),
+                    .with_system(spawn_arrows)
+                    .with_system(move_arrows)
+                    .with_system(despawn_arrows),
             );
     }
 }

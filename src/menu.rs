@@ -178,12 +178,12 @@ pub struct MenuPlugin;
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ButtonMaterials>()
-            .add_system_set(SystemSet::on_enter(AppState::Menu).with_system(setup_menu.system()))
+            .add_system_set(SystemSet::on_enter(AppState::Menu).with_system(setup_menu))
             .add_system_set(
                 SystemSet::on_update(AppState::Menu)
-                    .with_system(button_color_system.system())
-                    .with_system(button_press_system.system()),
+                    .with_system(button_color_system)
+                    .with_system(button_press_system),
             )
-            .add_system_set(SystemSet::on_exit(AppState::Menu).with_system(despawn_menu.system()));
+            .add_system_set(SystemSet::on_exit(AppState::Menu).with_system(despawn_menu));
     }
 }

@@ -111,11 +111,11 @@ fn update_score_text(score: Res<ScoreResource>, mut query: Query<(&mut Text, &Sc
 pub struct UIPlugin;
 impl Plugin for UIPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_system_set(SystemSet::on_enter(AppState::Game).with_system(setup_ui.system()))
+        app.add_system_set(SystemSet::on_enter(AppState::Game).with_system(setup_ui))
             .add_system_set(
                 SystemSet::on_update(AppState::Game)
-                    .with_system(update_time_text.system())
-                    .with_system(update_score_text.system()),
+                    .with_system(update_time_text)
+                    .with_system(update_score_text),
             );
     }
 }

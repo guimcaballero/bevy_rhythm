@@ -57,12 +57,12 @@ impl Plugin for ShadersPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_asset::<ShaderInputs>()
             .add_asset::<TimeSinceLastCorrect>()
-            .add_startup_system(setup_render_graph.system())
-            .add_system(update_time.system())
-            .add_system(update_resolution.system())
-            .add_startup_system(setup_background.system())
-            .add_system(update_background_size.system())
-            .add_startup_system(setup_target_arrows.system())
-            .add_system(correct_arrow_event_listener.system());
+            .add_startup_system(setup_render_graph)
+            .add_system(update_time)
+            .add_system(update_resolution)
+            .add_startup_system(setup_background)
+            .add_system(update_background_size)
+            .add_startup_system(setup_target_arrows)
+            .add_system(correct_arrow_event_listener);
     }
 }
